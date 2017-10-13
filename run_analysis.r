@@ -19,8 +19,6 @@ rm(x_train, x_test, y_train, y_test)
 features <- read.table("features.txt")
 select_features <- grep("mean|std" , features[, 2])
 x_table <- x_table[, select_features]
-names(x_table) <- features[select_features, 2]
-rm(features, select_features)
 
 # 3. Uses descriptive activity names to name the activities in the data set
 
@@ -31,16 +29,18 @@ rm(activities)
 
 # 4. Appropriately labels the data set with descriptive variable names.
 
+names(x_table) <- features[select_features, 2]
+rm(features, select_features)
+
+# 5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
 subject_train <- read.table("train/subject_train.txt")
 subject_test <- read.table("test/subject_test.txt")
 subject_table <- rbind(subject_train, subject_test)
-rm(subject_train, subject_test)
 names(subject_table) <- "subject"
 
 complete_table <- cbind(subject_table, x_table, y_table)
-rm(subject_table, x_table, y_table)
+rm(subject_table, x_table, y_table, subject_train, subject_test)
 
-# 5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
 complete_table_average <- aggregate(complete_table[, 2:80], complete_table[, c("subject", "activity")], FUN = mean)
 
 # Create Data Set as a txt file created with write.table() using row.name=FALSE
